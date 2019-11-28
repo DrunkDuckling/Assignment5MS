@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".service.ActivityIntentService"
+            android:name=".ActivityIntentService"
             android:exported="false"></service>
         <activity
             android:name=".MainActivity"

@@ -1,4 +1,4 @@
-package com.app.assignment5ms.service;
+package com.app.assignment5ms;
 
 import java.util.ArrayList;
 import java.lang.reflect.Type;
@@ -11,40 +11,53 @@ import android.content.Intent;
 import android.app.IntentService;
 import android.preference.PreferenceManager;
 import android.content.res.Resources;
+import android.util.Log;
+
 import com.google.gson.reflect.TypeToken;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
 //Extend IntentService//
 public class ActivityIntentService extends IntentService {
-    protected static final String TAG = "Activity";
+
+    protected static final String TAG = "IntentService";
+
     //Call the super IntentService constructor with the name for the worker thread//
     public ActivityIntentService() {
         super(TAG);
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
     }
 
-//Define an onHandleIntent() method, which will be called whenever an activity detection update is available//
-
+    //Define an onHandleIntent() method, which will be called whenever an activity detection update is available//
     @Override
     protected void onHandleIntent(Intent intent) {
-//Check whether the Intent contains activity recognition data//
+        //Check whether the Intent contains activity recognition data//
         if (ActivityRecognitionResult.hasResult(intent)) {
 
-//If data is available, then extract the ActivityRecognitionResult from the Intent//
+            //If data is available, then extract the ActivityRecognitionResult from the Intent//
             ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
 
-//Get an array of DetectedActivity objects//
+            //Get an array of DetectedActivity objects//
             ArrayList<DetectedActivity> detectedActivities = (ArrayList) result.getProbableActivities();
             PreferenceManager.getDefaultSharedPreferences(this).edit()
                     .putString(MainActivity.DETECTED_ACTIVITY,
-                            detectedActivitiesToJson(detectedActivities))
-                    .apply();
+                            detectedActivitiesToJson(detectedActivities)).apply();
 
+            // Log each activity.
+            Log.i(TAG, "activities detected");
+            for (DetectedActivity da : detectedActivities) {
+                Log.i(TAG, getActivityString(
+                        getApplicationContext(),
+                        da.getType()) + " " + da.getConfidence() + "%"
+                );
+            }
         }
+
+
     }
 //Convert the code for the detected activity type, into the corresponding string//
 
@@ -70,6 +83,17 @@ public class ActivityIntentService extends IntentService {
         }
     }
     public static final int[] POSSIBLE_ACTIVITIES = {
+
+            /*
+            IN_VEHICLE  = 0;
+            ON_BICYCLE  = 1;
+            ON_FOOT     = 2;
+            STILL       = 3;
+            UNKNOWN     = 4;
+            TILTING     = 5;
+            WALKING     = 7;
+            RUNNING     = 8;
+            */
 
             DetectedActivity.STILL,
             DetectedActivity.ON_FOOT,
