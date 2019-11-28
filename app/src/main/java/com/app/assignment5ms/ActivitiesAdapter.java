@@ -19,12 +19,9 @@ import java.util.HashMap;
 class ActivitiesAdapter extends ArrayAdapter<DetectedActivity> {
 
     HashMap<Integer, Integer> detectedActivitiesMap;
-
-
     ArrayList<ArrayList<Integer>> completeActivitesMap;
 
-    ActivitiesAdapter(Context context,
-                      ArrayList<DetectedActivity> detectedActivities) {
+    ActivitiesAdapter(Context context, ArrayList<DetectedActivity> detectedActivities) {
         super(context, 0, detectedActivities);
     }
     @NonNull

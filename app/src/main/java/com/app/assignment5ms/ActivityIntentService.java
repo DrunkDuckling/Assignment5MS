@@ -21,6 +21,7 @@ import com.google.android.gms.location.DetectedActivity;
 public class ActivityIntentService extends IntentService {
 
     protected static final String TAG = "IntentService";
+    public static MemoryList activitiesInMemory = new MemoryList() ;
 
     //Call the super IntentService constructor with the name for the worker thread//
     public ActivityIntentService() {
@@ -47,20 +48,51 @@ public class ActivityIntentService extends IntentService {
                     .putString(MainActivity.DETECTED_ACTIVITY,
                             detectedActivitiesToJson(detectedActivities)).apply();
 
-            // Log each activity.
+            // Gets the Int's corresponding with the activity
+            DetectedActivity mostProbableActivity = result.getMostProbableActivity();
+            String confidence = Integer.toString(mostProbableActivity.getConfidence());
+            int activityType = mostProbableActivity.getType();
+            determineActivityAndAddToLog(confidence, activityType);
+
+            /*// Log each activity.
             Log.i(TAG, "activities detected");
             for (DetectedActivity da : detectedActivities) {
                 Log.i(TAG, getActivityString(
                         getApplicationContext(),
                         da.getType()) + " " + da.getConfidence() + "%"
                 );
-            }
+            }*/
         }
 
 
     }
-//Convert the code for the detected activity type, into the corresponding string//
 
+    // get type and confidence and save it.
+    private void determineActivityAndAddToLog(String confidence, int type){
+
+        String ActivityType = "";
+
+        if (type == DetectedActivity.ON_BICYCLE)
+            ActivityType = "ON_BICYCLE";
+        else if(type == DetectedActivity.ON_FOOT)
+            ActivityType = "STANDING";
+        else if(type == DetectedActivity.RUNNING)
+            ActivityType = "RUNNING";
+        else if(type == DetectedActivity.STILL)
+            ActivityType = "STILL";
+        else if(type == DetectedActivity.TILTING)
+            ActivityType = "TILTING";
+        else if(type == DetectedActivity.WALKING)
+            ActivityType = "WALKING";
+        else if(type == DetectedActivity.IN_VEHICLE)
+            ActivityType = "IN_VEHICLE";
+        else
+            ActivityType = "UNKNOWN";
+
+        activitiesInMemory.add(ActivityType, confidence);
+    }
+
+//Convert the code for the detected activity type, into the corresponding string//
     public static String getActivityString(Context context, int detectedActivityType) {
         Resources resources = context.getResources();
         switch(detectedActivityType) {
